@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chrix Music — DJ Services</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #000000;
+    --surface: #0a0a0a;
+    --card: #111111;
+    --border: rgba(255,255,255,0.08);
+    --text: #f5f5f7;
+    --muted: rgba(255,255,255,0.45);
+    --accent: #ffffff;
+    --gold: #c9a84c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Figtree', -apple-system, 'Helvetica Neue', sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    height: 64px;
+    background: rgba(0,0,0,0.72);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .nav-vinyl {
+    animation: spin 8s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  .nav-name {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--text); }
+
+  .nav-cta {
+    background: var(--text);
+    color: #000 !important;
+    padding: 8px 20px;
+    border-radius: 980px;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    transition: background 0.2s, transform 0.2s !important;
+  }
+
+  .nav-cta:hover {
+    background: rgba(255,255,255,0.85) !important;
+    transform: scale(1.03);
+    color: #000 !important;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Ambient glow */
+  .hero::after {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-vinyl-wrap {
+    position: relative;
+    margin-bottom: 52px;
+  }
+
+  .hero-vinyl {
+    animation: heroSpin 7s linear infinite;
+    filter: drop-shadow(0 24px 80px rgba(0,0,0,0.9)) drop-shadow(0 0 40px rgba(255,255,255,0.04));
+  }
+
+  @keyframes heroSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  /* Pulse ring */
+  .pulse-ring {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.06);
+    animation: pulse 3s ease-out infinite;
+  }
+
+  .pulse-ring:nth-child(2) { animation-delay: 1s; }
+  .pulse-ring:nth-child(3) { animation-delay: 2s; }
+
+  @keyframes pulse {
+    0%   { transform: translate(-50%,-50%) scale(1); opacity: 0.5; }
+    100% { transform: translate(-50%,-50%) scale(2.2); opacity: 0; }
+  }
+
+  .hero-tag {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    animation: fadeUp 0.8s ease forwards;
+    opacity: 0;
+  }
+
+  .hero-title {
+    font-size: clamp(64px, 12vw, 120px);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+    text-transform: uppercase;
+    background: linear-gradient(175deg, #ffffff 0%, #8e8e93 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeUp 0.8s 0.1s ease forwards;
+    opacity: 0;
+    margin-bottom: 16px;
+  }
+
+  .hero-sub {
+    font-size: 15px;
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    text-transform: uppercase;
+    animation: fadeUp 0.8s 0.2s ease forwards;
+    opacity: 0;
+    margin-bottom: 40px;
+  }
+
+  .hero-desc {
+    font-size: 19px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.6);
+    max-width: 520px;
+    line-height: 1.6;
+    animation: fadeUp 0.8s 0.3s ease forwards;
+    opacity: 0;
+    margin-bottom: 48px;
+  }
+
+  .hero-desc strong {
+    color: rgba(255,255,255,0.9);
+    font-weight: 600;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 14px;
+    animation: fadeUp 0.8s 0.4s ease forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .btn-primary {
+    background: #fff;
+    color: #000;
+    padding: 14px 32px;
+    border-radius: 980px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    letter-spacing: -0.01em;
+  }
+
+  .btn-primary:hover {
+    background: rgba(255,255,255,0.88);
+    transform: scale(1.03);
+  }
+
+  .btn-secondary {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    padding: 14px 32px;
+    border-radius: 980px;
+    font-size: 15px;
+    font-weight: 400;
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.12);
+    transition: all 0.2s ease;
+    letter-spacing: -0.01em;
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.13);
+    transform: scale(1.03);
+  }
+
+  /* ── DIVIDER ── */
+  .section-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  /* ── SECTION COMMON ── */
+  section {
+    padding: 100px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.26em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .section-title {
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    text-align: center;
+    background: linear-gradient(175deg, #ffffff 0%, #8e8e93 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+  }
+
+  .section-lead {
+    font-size: 17px;
+    font-weight: 300;
+    color: var(--muted);
+    text-align: center;
+    max-width: 560px;
+    margin: 0 auto 64px;
+    line-height: 1.65;
+  }
+
+  /* ── ABOUT STRIP ── */
+  .about-strip {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 56px 24px;
+  }
+
+  .about-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .about-inner p {
+    font-size: 21px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .about-inner p strong {
+    color: #fff;
+    font-weight: 700;
+  }
+
+  /* ── SERVICES ── */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .service-card {
+    background: var(--card);
+    padding: 40px 36px;
+    position: relative;
+    transition: background 0.25s ease;
+    overflow: hidden;
+  }
+
+  .service-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .service-card:hover { background: #161616; }
+  .service-card:hover::before { opacity: 1; }
+
+  .service-icon {
+    font-size: 36px;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .service-name {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .service-desc {
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .service-tag {
+    display: inline-block;
+    margin-top: 18px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 4px 12px;
+    border-radius: 980px;
+  }
+
+  /* ── OPEN FORMAT BANNER ── */
+  .openformat-banner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 56px 48px;
+    text-align: center;
+    margin-top: 64px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .openformat-banner::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%;
+    transform: translateX(-50%);
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+  }
+
+  .openformat-banner h3 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.26em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .openformat-banner p {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(175deg, #ffffff 0%, #8e8e93 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    max-width: 600px;
+    margin: 0 auto 20px;
+  }
+
+  .openformat-banner span {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--muted);
+    display: block;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ── CONTACT ── */
+  .contact-section {
+    padding: 100px 24px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+  }
+
+  .contact-inner {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .contact-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 52px 48px;
+    margin-top: 48px;
+  }
+
+  .contact-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .contact-phone {
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 6px;
+    transition: opacity 0.2s;
+  }
+
+  .contact-phone:hover { opacity: 0.75; }
+
+  .contact-hint {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 300;
+    margin-bottom: 36px;
+  }
+
+  .contact-divider {
+    width: 48px;
+    height: 1px;
+    background: var(--border);
+    margin: 32px auto;
+  }
+
+  .social-placeholder {
+    font-size: 13px;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 0.12em;
+    font-style: italic;
+  }
+
+  .whatsapp-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    color: #000;
+    padding: 14px 32px;
+    border-radius: 980px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    margin-top: 4px;
+  }
+
+  .whatsapp-btn:hover {
+    background: rgba(255,255,255,0.88);
+    transform: scale(1.03);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--black);
+  }
+
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .footer-name {
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    color: rgba(255,255,255,0.6);
+  }
+
+  .footer-copy {
+    font-size: 12px;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .hero-buttons { flex-direction: column; align-items: center; }
+    .contact-card { padding: 36px 24px; }
+    .contact-phone { font-size: 28px; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+    .openformat-banner { padding: 40px 24px; }
+    .openformat-banner p { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="#hero" class="nav-logo">
+    <svg class="nav-vinyl" width="28" height="28" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="nvg" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#2c2c2e"/>
+          <stop offset="20%" stop-color="#111"/>
+          <stop offset="40%" stop-color="#1f1f1f"/>
+          <stop offset="70%" stop-color="#0a0a0a"/>
+          <stop offset="100%" stop-color="#1c1c1c"/>
+        </radialGradient>
+      </defs>
+      <circle cx="30" cy="30" r="29" fill="url(#nvg)" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+      <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.6"/>
+      <circle cx="30" cy="30" r="18" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.6"/>
+      <circle cx="30" cy="30" r="10" fill="#1a1a1a" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+      <circle cx="30" cy="30" r="3" fill="#000" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+    </svg>
+    <span class="nav-name">Chrix Music</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#servicii">Servicii</a></li>
+    <li><a href="#contact" class="nav-cta">Contactează-mă</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<div id="hero" class="hero">
+  <div class="hero-vinyl-wrap">
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <svg class="hero-vinyl" width="180" height="180" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="hvg" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#2c2c2e"/>
+          <stop offset="16%" stop-color="#1a1a1a"/>
+          <stop offset="16.5%" stop-color="#383838"/>
+          <stop offset="20%" stop-color="#111"/>
+          <stop offset="28%" stop-color="#222"/>
+          <stop offset="36%" stop-color="#0d0d0d"/>
+          <stop offset="46%" stop-color="#1f1f1f"/>
+          <stop offset="58%" stop-color="#0a0a0a"/>
+          <stop offset="72%" stop-color="#1c1c1c"/>
+          <stop offset="100%" stop-color="#0d0d0d"/>
+        </radialGradient>
+        <radialGradient id="hlg" cx="38%" cy="33%" r="60%">
+          <stop offset="0%" stop-color="#3a3a3c"/>
+          <stop offset="100%" stop-color="#0d0d0d"/>
+        </radialGradient>
+      </defs>
+      <circle cx="90" cy="90" r="88" fill="url(#hvg)" stroke="rgba(255,255,255,0.07)" stroke-width="0.5"/>
+      <circle cx="90" cy="90" r="80" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="0.8"/>
+      <circle cx="90" cy="90" r="70" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.8"/>
+      <circle cx="90" cy="90" r="58" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.8"/>
+      <circle cx="90" cy="90" r="46" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="0.8"/>
+      <path d="M 45 55 A 52 52 0 0 1 135 55" fill="none" stroke="rgba(255,255,255,0.09)" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="90" cy="90" r="28" fill="url(#hlg)" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+      <circle cx="90" cy="90" r="7" fill="#000" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+    </svg>
+  </div>
+
+  <p class="hero-tag">DJ Services · România</p>
+  <h1 class="hero-title">CHRIX<br>MUSIC</h1>
+  <p class="hero-sub">Open Format · Evenimente</p>
+  <p class="hero-desc">Muzica potrivită, la momentul potrivit. De la nuntă la club, de la botez la corporate — <strong>fiecare eveniment are propria sa energie.</strong></p>
+  <div class="hero-buttons">
+    <a href="#contact" class="btn-primary">Solicită o ofertă</a>
+    <a href="#servicii" class="btn-secondary">Vezi serviciile</a>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── ABOUT STRIP ── -->
+<div class="about-strip">
+  <div class="about-inner reveal">
+    <p>
+      <strong>Chrix Music</strong> aduce mai mult decât muzică la evenimentul tău —
+      aduce <strong>atmosferă, energie și amintiri</strong>. O echipă de Open Format DJs care se adaptează
+      perfect la publicul tău și la viziunea ta.
+    </p>
+  </div>
+</div>
+
+<!-- ── SERVICES ── -->
+<section id="servicii">
+  <p class="section-eyebrow reveal">Ce oferim</p>
+  <h2 class="section-title reveal">Servicii DJ pentru orice ocazie</h2>
+  <p class="section-lead reveal">Indiferent de eveniment, energia corectă face diferența. Iată cum te putem ajuta.</p>
+
+  <div class="services-grid reveal">
+
+    <div class="service-card">
+      <span class="service-icon">💍</span>
+      <div class="service-name">Nunți</div>
+      <div class="service-desc">De la cununia civilă la petrecerea de după miezul nopții. Playlist personalizat, momente speciale, dans non-stop. Ziua voastră, muzica voastră.</div>
+      <span class="service-tag">Eveniment Premium</span>
+    </div>
+
+    <div class="service-card">
+      <span class="service-icon">🍼</span>
+      <div class="service-name">Botezuri</div>
+      <div class="service-desc">Atmosferă caldă și voioasă pentru cei mai dragi oameni. Muzică de calitate care unește generațiile și face petrecerea de neuitat.</div>
+      <span class="service-tag">Familie & Prieteni</span>
+    </div>
+
+    <div class="service-card">
+      <span class="service-icon">🏢</span>
+      <div class="service-name">Corporate</div>
+      <div class="service-desc">Evenimente de firmă, team building-uri, lansări de produse. Profesionalism, punctualitate și muzică ce setează tonul potrivit pentru brandul tău.</div>
+      <span class="service-tag">Evenimente Business</span>
+    </div>
+
+    <div class="service-card">
+      <span class="service-icon">🎉</span>
+      <div class="service-name">Club & Petreceri Private</div>
+      <div class="service-desc">Energie maximă, read-ul publicului, tranziții fluide. De la after-party la petreceri exclusive — vibe-ul pe care îl cauți există.</div>
+      <span class="service-tag">Noapte & Energie</span>
+    </div>
+
+    <div class="service-card">
+      <span class="service-icon">🎓</span>
+      <div class="service-name">Evenimente Școlare</div>
+      <div class="service-desc">Bal de absolvire, petrecere de Bac, revelion studențesc. Momentele astea se întâmplă o singură dată — merită să fie perfecte.</div>
+      <span class="service-tag">Tineri & Energie</span>
+    </div>
+
+  </div>
+
+  <!-- Open Format Banner -->
+  <div class="openformat-banner reveal">
+    <h3>Filosofia noastră</h3>
+    <p>Open Format înseamnă libertate.</p>
+    <span>Nu ne limităm la un singur gen. Citim sala, simțim energia și construim un set care ține lumea pe ringul de dans de la prima până la ultima piesă.</span>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── CONTACT ── -->
+<div id="contact" class="contact-section">
+  <div class="contact-inner">
+    <p class="section-eyebrow reveal">Hai să vorbim</p>
+    <h2 class="section-title reveal">Rezervă-ți data</h2>
+    <p class="section-lead reveal">Scrie-ne sau sună-ne pentru disponibilitate și ofertă personalizată. Cu cât mai devreme, cu atât mai bine.</p>
+
+    <div class="contact-card reveal">
+      <div class="contact-label">Telefon & WhatsApp</div>
+      <a href="tel:+40732512937" class="contact-phone">+40 732 512 937</a>
+      <div class="contact-hint">Disponibil zilnic · Răspuns rapid</div>
+      <a href="https://wa.me/40732512937" target="_blank" class="whatsapp-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Scrie pe WhatsApp
+      </a>
+
+      <div class="contact-divider"></div>
+      <div class="social-placeholder">Social media · în curând</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo">
+    <svg width="20" height="20" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="fvg" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#2c2c2e"/>
+          <stop offset="40%" stop-color="#111"/>
+          <stop offset="100%" stop-color="#0d0d0d"/>
+        </radialGradient>
+      </defs>
+      <circle cx="30" cy="30" r="29" fill="url(#fvg)" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+      <circle cx="30" cy="30" r="10" fill="#1a1a1a" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+      <circle cx="30" cy="30" r="3" fill="#000"/>
+    </svg>
+    <span class="footer-name">Chrix Music</span>
+  </div>
+  <span class="footer-copy">© 2025 Chrix Music · Toate drepturile rezervate</span>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 60);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Nav active state on scroll
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    nav.style.background = window.scrollY > 40
+      ? 'rgba(0,0,0,0.88)'
+      : 'rgba(0,0,0,0.72)';
+  });
+</script>
+</body>
+</html>
